@@ -1,0 +1,50 @@
+# Spring实例化Bean的三种方式
+Spring实例化Bean的方式大致上可以分为三种，构造函数实例化，工厂方法实例化，静态工厂方法实例化。
+
+# Spring实例化Bean的三种方式
+测试结果：
+内部顺利被实例化，其属性值也注入进innerbean中。
+父子bean中的子bean，也通过继承parent bean，得到了name属性。
+
+# Spring注入集合属性
+Spring的依赖注入方式大体上可以分为三种：
+1、构造函数注入
+2、Setter方法注入
+3、方法注入（lookup-method注入和replace-method注入）——
+Spring的方法注入可分为两种
+查找方法注入：用于注入方法返回结果，也就是说能通过配置方式替换方法返回结果。即我们通常所说的lookup-method注入。
+替换方法注入：可以实现方法主体或返回结果的替换，即我们通常所说的replaced-method注入。
+
+# BeanFactory和FactoryBean的区别
+BeanFactory和FactoryBean是两个容易混淆的概念，很多人喜欢问两者之间的区别，其实两者之间并无内在联系。
+
+BeanFactory接口：IoC容器的顶级接口，是IoC容器的最基础实现，也是访问Spring容器的根接口，负责对bean的创建，访问等工作。
+FactoryBean接口：可以返回bean的实例的工厂bean，通过实现该接口可以对bean进行一些额外的操作，例如根据不同的配置类型返回不同类型的bean，
+简化xml配置等。
+在使用上也有些特殊，BeanFactory接口中有一个字符常量String FACTORY_BEAN_PREFIX = "&"; 
+当我们去获取FactoryBean类型的bean时，如果beanName不加&则获取到对应bean的实例；如果beanName加上&，
+则获取到BeanFactory本身的实例；FactoryBean接口对应Spring框架来说占有重要的地位，Spring本身就提供了70多个FactoryBean的实现。
+他们隐藏了实例化一些复杂的细节，给上层应用带来了便利。从Spring3.0开始，FactoryBean开始支持泛型。
+
+# Bean的作用域和生命周期
+##1.Bean的作用域
+singleton：单例Bean只在容器中存在一个实例，在Spring内部通过HashMap来维护单例bean的缓存
+prototype：每次索取bean时都会创建一个全新的Bean
+request：每次请求都会创建一个全新Bean，该类型作用于Web类型的Spring容器
+session：每个会话创建一个全新Bean，该类型作用于Web类型的Spring容器
+globalSession：类似于session作用域，只是其用于portlet环境的web应用。如果在非portlet环境将视为session作用域
+总结：以上就是spring中bean的作用域，其中singleton，prototype属于Spring bean的基本作作用域，request，session，globalSession属于web应用环境的作用域，必须有web应用环境的支持
+##2.Bean的生命周期
+![Image text](https://raw.githubusercontent.com/lizhen19911120/img-storage/master/bean%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png)
+1、IoC容器启动
+2、实例化bean
+3、如果Bean实现了BeanNameAware接口，则调用setBeanName(String name)返回beanName，该方法不是设置beanName，而只是让Bean获取自己在BeanFactory配置中的名字
+4、如果Bean实现BeanFactoryAware接口，会回调该接口的setBeanFactory(BeanFactory beanFactory)方法，传入该Bean的BeanFactory，这样该Bean就获得了自己所在的BeanFactory
+5、如果Bean实现了ApplicationContextAware接口，则调用该接口的setApplicationContext(ApplicationContext applicationContext)方法，设置applicationContext
+6、如果有Bean实现了BeanPostProcessor接口，则调用该接口的postProcessBeforeInitialzation(Object bean，String beanName)方法，将此BeanPostProcessor应用于给定的新bean实例
+7、如果Bean实现了InitializingBean接口，则会回调该接口的afterPropertiesSet()方法
+8、如果Bean配置了init-method方法，则会执行init-method配置的方法
+9、如果Bean实现了BeanPostProcessor接口，则会回调该接口的postProcessAfterInitialization(Object bean，String beanName)方法
+10、到此为止，spring中的bean已经可以使用了，这里又涉及到了bean的作用域问题，对于singleton类型的bean，Spring会将其缓存;对于prototype类型的bean，不缓存，每次都创建新的bean的实例
+11、容器关闭，如果Bean实现了DisposableBean接口，则会回调该接口的destroy()方法销毁bean，
+12、如果用户配置了定destroy-method，则调用自定义方法销毁bean

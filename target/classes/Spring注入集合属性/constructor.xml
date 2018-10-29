@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd" profile="dev">
+
+    <!-- ====================集合属性注入==================== -->
+    <bean id="cat" class="Spring注入集合属性.Cat">
+        <!--注入List集合-->
+        <property name="listNames">
+            <!-- merge 父子bean是否合并条目 -->
+            <list value-type="java.lang.String" merge="false">
+                <value>张三</value>
+                <value>李四</value>
+                <value>王五</value>
+            </list>
+        </property>
+
+        <!--注入Set集合-->
+        <property name="setNames">
+            <set value-type="java.lang.String" merge="true">
+                <value>张三</value>
+                <value>李四</value>
+                <value>王五</value>
+            </set>
+        </property>
+
+        <!--注入Map集合-->
+        <property name="mapNames">
+            <map key-type="java.lang.String" value-type="java.lang.String">
+                <entry key="name" value="小明"/>
+                <entry key="age" value="3"/>
+            </map>
+        </property>
+
+        <!--注入数组-->
+        <property name="arrayNames">
+            <array value-type="java.lang.String">
+                <value>张三</value>
+                <value>李四</value>
+                <value>王五</value>
+            </array>
+        </property>
+
+        <!--注入Properties-->
+        <property name="propertiesNames">
+            <props value-type="java.lang.String">
+                <prop key="name">小明</prop>
+                <prop key="age">3</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- ====================lookup-method属性注入==================== -->
+    <bean id="car" class="Spring注入集合属性.Car">
+        <!--注意:下面这句配置和lookup-method注入没有关系,我们只是为了出于演示和说明配置该bean-->
+        <property name="taxi" ref="taxi"/>
+        <!--lookup-method注入-->
+        <lookup-method name="createTaxi" bean="taxi"/>
+    </bean>
+    <bean id="taxi" class="Spring注入集合属性.Taxi" scope="prototype"/>
+
+    <!-- ====================replace-method属性注入==================== -->
+    <bean id="dogReplaceMethod" class="Spring注入集合属性.ReplaceDog"/>
+    <bean id="originalDogReplaceMethod" class="Spring注入集合属性.OriginalDog">
+        <replaced-method name="sayHello" replacer="dogReplaceMethod">
+            <arg-type match="java.lang.String"></arg-type>
+        </replaced-method>
+    </bean>
+
+</beans>
