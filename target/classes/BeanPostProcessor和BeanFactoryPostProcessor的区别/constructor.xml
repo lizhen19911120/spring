@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd" profile="dev">
+
+    <!-- ====================BeanPostProcessor和BeanFactoryPostProcessor的区别==================== -->
+    <!-- 默认构造实例化 -->
+    <bean id="dog1" class="Spring实例化Bean的三种方式.Dog"/>
+    <bean id="myBeanPostProcessorOne" class="BeanPostProcessor和BeanFactoryPostProcessor的区别.MyBeanPostProcessorOne"/>
+    <bean id="myBeanPostProcessorTwo" class="BeanPostProcessor和BeanFactoryPostProcessor的区别.MyBeanPostProcessorTwo"/>
+</beans>

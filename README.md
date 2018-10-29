@@ -1,7 +1,7 @@
 # Spring实例化Bean的三种方式
 Spring实例化Bean的方式大致上可以分为三种，构造函数实例化，工厂方法实例化，静态工厂方法实例化。
 
-# Spring实例化Bean的三种方式
+# Spring内部Bean和父子Bean
 测试结果：
 内部顺利被实例化，其属性值也注入进innerbean中。
 父子bean中的子bean，也通过继承parent bean，得到了name属性。
@@ -48,3 +48,14 @@ globalSession：类似于session作用域，只是其用于portlet环境的web�
 10、到此为止，spring中的bean已经可以使用了，这里又涉及到了bean的作用域问题，对于singleton类型的bean，Spring会将其缓存;对于prototype类型的bean，不缓存，每次都创建新的bean的实例
 11、容器关闭，如果Bean实现了DisposableBean接口，则会回调该接口的destroy()方法销毁bean，
 12、如果用户配置了定destroy-method，则调用自定义方法销毁bean
+
+# BeanPostProcessor和BeanFactoryPostProcessor的区别
+BeanPostProcessor接口：后置bean处理器，允许自定义修改新的bean实例，
+应用程序上下文可以在其bean定义中自动检测BeanPostProcessor类型的bean，并将它们应用于随后创建的任何bean。
+（例如：配置文件中注册了一个自定义BeanPostProcessor类型的bean，一个User类型的bean，
+应用程序上下文会在创建User实例之后对User应用BeanPostProcessor）。
+
+BeanFactoryPostProcessor接口：后置工厂处理器，允许自定义修改应用程序上下文的bean定义，
+调整bean属性值。应用程序上下文可以在其bean定义中自动检测BeanFactoryPostProcessor，
+并在创建任何非BeanFactoryPostProcessor类型bean之前应用它们（例如：配置文件中注册了一个自定义BeanFactoryPostProcessor类型的bean，
+一个User类型的bean，应用程序上下文会在创建User实例之前对User应用BeanFactoryPostProcessor）。
