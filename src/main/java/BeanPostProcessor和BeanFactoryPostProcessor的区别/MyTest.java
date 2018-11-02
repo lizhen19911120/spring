@@ -28,7 +28,7 @@ public class MyTest {
 
     @Test
     public void test13() {
-        // 生命周期测试
+        // BeanPostProcessor和BeanFactoryPostProcessor的区别
         Dog dog1 = applicationContext.getBean("dog1", Dog.class);
         System.out.println("dog1: " + dog1.toString());
 

@@ -37,7 +37,11 @@ public class MyTest {
     public void test2() {
         // 指定构造器
         System.out.println("有参构造器");
-        Dog dog2 = xmlBeanFactory.getBean("dog2", Dog.class);
+//        Dog dog2 = xmlBeanFactory.getBean("dog2", Dog.class);
+        /**
+         * 覆盖xml中定义的dog2，获取一个新的dog2，替换缓存中的dog2
+         */
+        Dog dog2 = (Dog)xmlBeanFactory.getBean("dog2", "Tom", 100);
         dog2.sayHello();
     }
 
