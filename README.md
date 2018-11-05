@@ -50,12 +50,12 @@ globalSession：类似于session作用域，只是其用于portlet环境的web�
 12、如果用户配置了定destroy-method，则调用自定义方法销毁bean
 
 # BeanPostProcessor和BeanFactoryPostProcessor的区别
-BeanPostProcessor接口：后置bean处理器，允许自定义修改新的bean实例，
+BeanPostProcessor接口：后置bean处理器，BeanFactory容器默认功能，允许自定义修改新的bean实例，
 应用程序上下文可以在其bean定义中自动检测BeanPostProcessor类型的bean，并将它们应用于随后创建的任何bean。
 （例如：配置文件中注册了一个自定义BeanPostProcessor类型的bean，一个User类型的bean，
 应用程序上下文会在创建User实例之后对User应用BeanPostProcessor）。
 
-BeanFactoryPostProcessor接口：后置工厂处理器，允许自定义修改应用程序上下文的bean定义，
+BeanFactoryPostProcessor接口：后置工厂处理器，ApplicationContext容器额外功能，允许自定义修改应用程序上下文的bean定义，
 调整bean属性值。应用程序上下文可以在其bean定义中自动检测BeanFactoryPostProcessor，
 并在创建任何非BeanFactoryPostProcessor类型bean之前应用它们（例如：配置文件中注册了一个自定义BeanFactoryPostProcessor类型的bean，
 一个User类型的bean，应用程序上下文会在创建User实例之前对User应用BeanFactoryPostProcessor）。
@@ -71,15 +71,6 @@ ApplicationContext 是 BeanFactory 的子接口。它能更容易集成Spring的
 总之，BeanFactory 提供了配置框架和基本方法，ApplicationContext添加更多的企业特定的功能。ApplicationContext是BeanFactory 的一个子接口，通过解析BeanFactory的源码是了解Spring的IoC容器的一个最佳选择。
 
 在Spring中，由Spring IoC容器管理的对象叫做beans。bean就是由Spring IoC容器实例化、组装和以其他方式管理的对象。此外bean只是你应用中许多对象中的一个。Beans以及他们之间的依赖关系是通过容器配置元数据反映出来。
-
-## ApplicationContext
-很多人以完全声明的方式使用ApplicationContext，甚至没有以编程的方式去创建它，而是**依赖诸如ContextLoader等支持类来自动的实例化ApplicationContext**，作为Java EE web应用程序正常启动的一部分。
-
-为了增强BeanFactory在面向框架风格的功能，上下文的包还提供了以下的功能：
-<br>通过MessageSource接口访问i18n风格的消息
-<br>通过ResourceLoader接口访问类似URL和文件资源
-<br>通过ApplicationEventPublisher接口，即bean实现ApplicationListener接口来进行事件发布
-<br>通过HierarchicalBeanFactory接口实现加载多个(分层)上下文，允许每个上下文只关注特定的层，例如应用中的web层
 
 <br>下表列了BeanFactory 和 ApplicationContext接口和实现的一些特性：
 ![Image text](https://raw.githubusercontent.com/lizhen19911120/img-storage/master/BeanFactory%E5%92%8CApplicationContext%E5%8C%BA%E5%88%AB.png)
@@ -136,3 +127,18 @@ ApplicationContext 是 BeanFactory 的子接口。它能更容易集成Spring的
 <br> 5.3.5.2 其中resolveValueIfNecessary()会根据属性值转换后的类型进行解析，做类型转换工作
 <br> 5.3.5.3 使用类型转换器再进行可能的类型转换，将深度拷贝的转换后的属性池赋给bean进行属性填充
 <br> 5.3.5.4 spring会筛选set×××()的方法，填充属性最终是应用Method.invoke()实现
+
+## ApplicationContextSprng ApplicationContext容器refresh过程（扩展原始beanFactory容器功能）简析
+很多人以完全声明的方式使用ApplicationContext，甚至没有以编程的方式去创建它，而是**依赖诸如ContextLoader等支持类来自动的实例化ApplicationContext**，作为Java EE web应用程序正常启动的一部分。
+为了增强BeanFactory在面向框架风格的功能，上下文的包还提供了以下的功能：
+
+
+以下分析以ClassPathXmlApplicationContext为例——
+<br>首先，相较于XmlBeanFactory(beanFactory实现)，它能够同时加载多个配置文件，后加载的覆盖前面的bean定义
+<br>其次，ApplicationContext容器通过refresh()方法增加许多额外的功能，主要有：
+<br>其中的prepareBeanFactory()步骤，实现自定义bean的class文件的classLoader设置、beanFactory的语言处理器设置(比如#{bean.xxx})、额外的ignoreDependencyInterface()和registerResolvableDependency()、增加对AspectJ的支持等
+<br>调用BeanFactoryPostProcessor接口的方法
+<br>通过MessageSource接口访问i18n风格的消息
+<br>通过ResourceLoader接口访问类似URL和文件资源
+<br>初始化初始事件广播器，然后在广播器中添加注册事件监听器，实现通过ApplicationEventPublisher接口，即bean实现ApplicationListener接口来进行事件发布
+<br>通过HierarchicalBeanFactory接口实现加载多个(分层)上下文，允许每个上下文只关注特定的层，例如应用中的web层
