@@ -142,3 +142,64 @@ ApplicationContext 是 BeanFactory 的子接口。它能更容易集成Spring的
 <br>通过ResourceLoader接口访问类似URL和文件资源
 <br>初始化初始事件广播器，然后在广播器中添加注册事件监听器，实现通过ApplicationEventPublisher接口，即bean实现ApplicationListener接口来进行事件发布
 <br>通过HierarchicalBeanFactory接口实现加载多个(分层)上下文，允许每个上下文只关注特定的层，例如应用中的web层
+
+# spring中的pointcut、advisor概念
+在应用Advice增强前，需要对生效的类、方法调用做出筛选，pointcut就是做这一工作的类，其中有ClassFilter和MethodMatcher，分别对类和方法做出具体的逻辑工作。
+<br>Spring支持两种方法匹配器(MethodMatcher)：
+<br>1、静态方法匹模式：所谓静态方法匹配器，仅对方法名签名（包括方法名和入参类型及顺序）进行匹配。
+<br>2、动态方法匹配器：动态方法匹配器会在运行期方法检查入参的值。 静态匹配仅会判断一次（编译时就完成匹配？），而动态匹配因为每次调用方法的入参可能不一样，所以每次调用方法都必须判断。
+
+Spring提供的切点类型（pointcut）
+<br>1、静态方法切点-->org.springframework.aop.support.StaticMethodMatcherPointcut
+静态方法切点的抽象基类，默认情况下匹配所有的类。最常用的两个子类NameMatchMethodPointcut和 AbstractRegexpMethodPointcut ， 前者提供简单字符串匹配方法签名，后者使用正则表达式匹配方法签名。
+<br>2、动态方法切点-->org.springframework.aop.support.DynamicMethodMatcherPointcut
+动态方法切点的抽象基类，默认情况下匹配所有的类
+<br>3、注解切点-->org.springframework.aop.support.annotation.AnnotationMatchingPointcut
+<br>4、表达式切点-->org.springframework.aop.support.ExpressionPointcut
+提供了对AspectJ切点表达式语法的支持
+<br>5、流程切点-->org.springframework.aop.support.ControlFlowPointcut
+该切点是一个比较特殊的节点，它根据程序执行的堆栈信息查看目标方法是否由某一个方法直接或间接发起调用，一次来判断是否为匹配的链接点
+<br>6、复合切点-->org.springframework.aop.support.ComposablePointcut
+该类是为实现创建多个切点而提供的操作类
+  
+当advice和pointcut在一起时，就成了advisor（切面）
+切面可以分为3类：一般切面、切点切面、引介切面。Spring提供了这三类切面实现（advisor）
+
+一般切面Advisor
+<br>org.springframework.aop.Advisor代表一般切面，仅包含一个Advice ,因为Advice包含了横切代码和连接点信息，所以Advice本身一个简单的切面，只不过它代表的横切的连接点是所有目标类的所有方法，因为这个横切面太宽泛，所以一般不会直接使用。
+
+切点切面PointcutAdvisor
+<br>org.springframework.aop.PointcutAdvisor ,代表具有切点的切面，包括Advice和Pointcut两个类，这样就可以通过类、方法名以及方位等信息灵活的定义切面的连接点，提供更具实用性的切面。PointcutAdvisor主要有5个具体的实现类：
+DefaultPointcutAdvisor：最常用的切面类型，它可以通过任意Pointcut和Advice定义一个切面，唯一不支持的就是引介的切面类型，一般可以通过扩展该类实现自定义的切面
+NameMatchMethodPointcutAdvisor：通过该类可以定义按方法名定义切点的切面
+AspectJExpressionPointcutAdvisor：用于AspectJ切点表达式定义切点的切面
+StaticMethodMatcherPointcutAdvisor：静态方法匹配器切点定义的切面，默认情况下匹配所有的的目标类
+AspectJPointcutAdvisor：用于AspectJ语法定义切点的切面
+
+<br>引介切面IntroductionAdvisor
+org.springframework.aop.IntroductionAdvisor代表引介切面， 引介切面是对应引介增强的特殊的切面，它应用于类层上面，所以引介切点使用ClassFilter进行定义。
+
+# spring AOP的实现过程
+xml中的<aop:aspectj-autoproxy>元素即开启了AOP对spring中的bean的动态代理。具体的
+实现方式大体是顺着以上对于spring创建bean的过程再加上额外的工作完成的。由于源码较为繁琐且
+大致实现差不多，所以这里简要说明步骤：
+<br> 1、<aop:aspectj-autoproxy/>不是spring默认的xml命名空间，所以会通过xml中的namespaceUri获取对应的NamespaceHandler解析器，完成对标签的解析工作之外，并注册了AnnotationAwareAspectJAutoProxyCreator到spring容器中
+<br> 2、AnnotationAwareAspectJAutoProxyCreator实现了BeanPostProcessor接口，读过之前的章节或者对bean的生命周期有所了解的同学一定知道，在bean实例化完成之前和完成之后分别会自动BeanPostProcessor接口的postProcessBeforeInitialization和postProcessAfterInitialization方法
+<br> postProcessBeforeInstantiation()主要做了以下工作：1、判断beanClass是否为AOP基础类例如Advice，Pointcut或者是一个Advisor或者beanClass是否需要被自动代理，不需要的话则直接缓存；2、判断有无自定义TargetSource（bean的target source），如果是的话，则在此方法里创建代理，而不是在postProcessAfterInitialization()中创建        
+<br> postProcessAfterInitialization()主要做了以下工作：如果bean被子类标识为要代理的bean，则使用配置的拦截器创建代理（如果是提前缓存以解决循环依赖的bean则先跳过）。                           
+
+<br> 针对2的postProcessAfterInitialization()
+<br> 2.1 wrapIfNecessary()执行真正的创建代理工作
+<br> 2.1.1 做以下工作：如果已经处理过或者不需要创建代理，则返回；需要创建代理的bean则创建代理；缓存创建的代理bean
+<br> 2.1.1.1 针对创建代理的步骤，做以下工作：
+<br> 获取所有的候选的aspect切面，具体逻辑是遍历spring容器中的bean，然后先判断是否是有<<aop:include>>指定了哪些aspect切面是使用的则只创建它们，如果没有指定
+则会根据类型判断是否是aspect切面类进行创建与否。在创建切面实例时，还会检查@Aspect注解的值，如果有指明（PERTHIS、PERTARGET等）则会创建多例的切面实例，默认是单
+例的（Schema风格只支持singleton实例化模型，而@AspectJ风格支持这三种实例化模型；当使用perthis或pertarget属性时，切面类不能是单例bean）
+<br> 2.1.1.2 获得所有候选的aspect切面实例后，然后就会从中挑选出适合应用于当前创建的bean实例的切面，用来创建代理实例。大概的判断依据是Advisor中的pointcut的ClassFilter和MethodMatcher。
+<br> 2.1.1.3 现在真正开始创建AOP代理了，先确定给定bean的advisors，包括特定的拦截器和公共拦截器（参看“Aop基于Advice接口的增强实现”中的Advice、Interceptor），是否适配Advisor接口，将它们统一转为Advisor加入到现有的切面实例中。    
+然后根据设置的条件判断是使用CGLIB动态代理（返回ObjenesisCglibAopProxy，使用增强子类加回调方法等创建bean的代理对象）还是JDK动态代理（返回JdkDynamicAopProxy——一个InvocationHandler，使用jdk动态代理创建bean的代理对象）
+
+<br> 3、以上工作创建好bean的代理对象后，在调用被代理的bean方法时就会通过JdkDynamicAopProxy的invoke()方法执行增强方法的逻辑了。
+有几个特点，首先是equals()和hashCode()方法默认在被代理的bean的接口没有重写时是不被增强的；其次如果目标对象是Adviced类型，则直接使用反射进行调用；最后调用代理对象的advice链依次执行+执行目标对象的方法，最后返回执行结果。而且执行是有顺序的。
+<br> 如果是CGLIB，在调用被代理的bean方法时就会通过ObjenesisCglibAopProxy的DynamicAdvisedInterceptor内部类的intercept()方法执行增强逻辑了。
+与jdk时的情况一样，调用代理对象的advice链依次执行+执行目标对象的方法，最后返回执行结果。而且执行是有顺序的。
