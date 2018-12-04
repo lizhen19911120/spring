@@ -203,3 +203,10 @@ xml中的<aop:aspectj-autoproxy>元素即开启了AOP对spring中的bean的动�
 有几个特点，首先是equals()和hashCode()方法默认在被代理的bean的接口没有重写时是不被增强的；其次如果目标对象是Adviced类型，则直接使用反射进行调用；最后调用代理对象的advice链依次执行+执行目标对象的方法，最后返回执行结果。而且执行是有顺序的。
 <br> 如果是CGLIB，在调用被代理的bean方法时就会通过ObjenesisCglibAopProxy的DynamicAdvisedInterceptor内部类的intercept()方法执行增强逻辑了。
 与jdk时的情况一样，调用代理对象的advice链依次执行+执行目标对象的方法，最后返回执行结果。而且执行是有顺序的。
+
+#使用SpringData设计Dao层
+Locale: “国际化信息”也称为“本地化信息”，一般需要两个条件才可以确定一个特定类型的本地化信息，它们分别是“语言类型”和“国家/地区的类型”。如中文本地化信息既有中国大陆地区的中文，又有中国台湾、中国香港地区的中文，还有新加坡地区的中文。Java通过java.util.Locale类表示一个本地化对象，它允许通过语言参数和国家/地区参数创建一个确定的本地化对象。 
+本地化工具类: JDK的java.util包中提供了几个支持本地化的格式化操作工具类：NumberFormat、DateFormat、MessageFormat。
+特别地，MessageFormat在NumberFormat和DateFormat的基础上提供了强大的占位符字符串的格式化功能，它支持时间、货币、数字以及对象属性的格式化操作。
+ResourceBoundle: Java为我们提供用于加载本地化资源文件的方便类,ResourceBoundle为加载及访问资源文件提供便捷的操作，从相对于类的全路径的目录中加载一个名为**\<资源名\>**\_\<语言代码>\_\<国家/地区代码\>.properties的本地化资源文件。会自动根绝文件名和locale匹配。
+MessageSource: spring提供的整合ResourceBoundle功能并添加其他功能的方便类，ReloadableResourceBundleMessageSource可以设置实时读取更新后的项目配置的资源文件，注意修改的文件是部署在服务器上的资源文件。

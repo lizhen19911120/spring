@@ -1,4 +1,4 @@
-package Spring资源文件读取;
+package Spring配置文件读取.spring;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,10 +35,10 @@ public class MyTest {
     @Test
     public void test14() {
         // 从资源文件夹下加载
-        Resource resource = new ClassPathResource("/Spring资源文件读取/constructor.xml");
+        Resource resource = new ClassPathResource("/Spring配置文件读取/constructor.xml");
         /*
         或者
-        Resource resource = new ClassPathResource("Spring资源文件读取/constructor.xml");
+        Resource resource = new ClassPathResource("Spring配置文件读取/constructor.xml");
          */
         print(resource);
 
@@ -56,7 +56,7 @@ public class MyTest {
         Resource resource = new ClassPathResource("constructor.xml", MyTest.class);
         /*
         或者
-        Resource resource = new ClassPathResource("/Spring资源文件读取/constructor.xml", MyTest.class);
+        Resource resource = new ClassPathResource("/Spring配置文件读取/constructor.xml", MyTest.class);
          */
         print(resource);
 
@@ -68,10 +68,10 @@ public class MyTest {
     @Test
     public void test16() {
         // 使用类加载器从资源文件夹下加载
-        Resource resource = new ClassPathResource("Spring资源文件读取/constructor.xml", MyTest.class.getClassLoader());
+        Resource resource = new ClassPathResource("Spring配置文件读取/constructor.xml", MyTest.class.getClassLoader());
          /*
         或者
-        Resource resource = new ClassPathResource("/Spring资源文件读取/constructor.xml", MyTest.class.getClassLoader());
+        Resource resource = new ClassPathResource("/Spring配置文件读取/constructor.xml", MyTest.class.getClassLoader());
          */
         print(resource);
     }
@@ -86,12 +86,12 @@ public class MyTest {
     @Test
     public void test17() {
         // 使用DefaultResourceLoader加载
-        Resource resource = new DefaultResourceLoader().getResource("Spring资源文件读取/constructor.xml");
+        Resource resource = new DefaultResourceLoader().getResource("Spring配置文件读取/constructor.xml");
         /*
         或者
-        Resource resource = new DefaultResourceLoader().getResource("/Spring资源文件读取/constructor.xml");
-        Resource resource = new DefaultResourceLoader().getResource("classpath:Spring资源文件读取/constructor.xml");
-        Resource resource = new DefaultResourceLoader().getResource("classpath:/Spring资源文件读取/constructor.xml");
+        Resource resource = new DefaultResourceLoader().getResource("/Spring配置文件读取/constructor.xml");
+        Resource resource = new DefaultResourceLoader().getResource("classpath:Spring配置文件读取/constructor.xml");
+        Resource resource = new DefaultResourceLoader().getResource("classpath:/Spring配置文件读取/constructor.xml");
          */
         print(resource);
     }
