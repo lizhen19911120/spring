@@ -32,8 +32,33 @@ public class MyTest {
     public void test18() {
         // JDK动态代理
         MyInvocationHandler handler = new MyInvocationHandler(new Dog());
+
+        /**
+         * 另一种复杂的获取代理对象的方法
+         */
+//        Class clazz = Proxy.getProxyClass(Thread.currentThread().getContextClassLoader(), new Class[] { Animal.class });
+//        try {
+//            Constructor constructor = clazz.getConstructor(new Class[] { InvocationHandler.class });
+//            try {
+//                Animal Proxy = (Animal)constructor.newInstance(new Object[] { handler });
+//                Proxy.run();
+//            } catch (InstantiationException e) {
+//                e.printStackTrace();
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            } catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        }
+
         Animal proxy = (Animal) handler.getProxy();
         proxy.say();
+        System.out.println("-------------------");
+        proxy.run();
+
+
     }
 
     /**

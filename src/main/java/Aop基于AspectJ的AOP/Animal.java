@@ -5,4 +5,5 @@ package Aop基于AspectJ的AOP;
  */
 public interface Animal {
     void sayHello();
+    void run();
 }

@@ -5,8 +5,10 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd" profile="dev">
 
     <!-- ====================实例化bean的方式Begin==================== -->
-    <!-- 默认构造实例化 -->
-    <bean id="dog1" class="Spring实例化Bean的三种方式.Dog"/>
+    <!-- 默认构造实例化，通过name可以设置这个bean多个别名 -->
+
+    <bean id="dog1" class="Spring实例化Bean的三种方式.Dog" name="dog11,dog111">
+    </bean>
 
     <!-- 指定构造器实例化 -->
     <bean id="dog2" class="Spring实例化Bean的三种方式.Dog">

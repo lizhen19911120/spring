@@ -20,6 +20,9 @@ public class LifeCycleBean implements
     // 年龄
     private int age;
 
+    /** 内部bean **/
+    private Bean的作用域和生命周期.Inner inner;
+
     @Override
     public void setBeanName(String name) {
         System.out.println("01-->BeanNameAware接口被调用了, 获取到的beanName:" + name);
@@ -27,12 +30,17 @@ public class LifeCycleBean implements
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        System.out.println("02-->BeanFactoryAware接口被调用了");
+        System.out.println("02-->BeanFactoryAware接口被调用了"+beanFactory);
     }
 
+    /**
+     * 只有当使用ApplicationContext容器才会注入
+     * @param applicationContext
+     * @throws BeansException
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        System.out.println("03-->ApplicationContextAware接口被调用了");
+        System.out.println("03-->ApplicationContextAware接口被调用了"+applicationContext);
     }
 
     @Override
@@ -67,6 +75,14 @@ public class LifeCycleBean implements
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Inner getInner() {
+        return inner;
+    }
+
+    public void setInner(Inner inner) {
+        this.inner = inner;
     }
 
     @Override

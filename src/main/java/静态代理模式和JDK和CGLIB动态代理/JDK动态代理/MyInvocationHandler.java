@@ -29,6 +29,12 @@ public class MyInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("==代理方法开始执行");
+
+        /**
+         * 暴露代理给目标类，实现目标类对自己方法调用的代理
+         */
+        ((Dog)target).setProxy(getProxy());
+
         Object invoke = method.invoke(target, args);
 
         myMehtod();

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * Created by lizhen on 2018/10/29.
+ * 只有当使用ApplicationContext容器才会注册自定义的BeanPostProcessor到容器中
  */
 public class LifeCycleBeanPostProcessor implements BeanPostProcessor {
 

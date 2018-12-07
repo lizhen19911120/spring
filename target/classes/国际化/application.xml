@@ -27,6 +27,7 @@
         <property name="cacheSeconds" value="5"/>
     </bean>
 
+    <!-- 只要定义一个bean name是“messageSource”的bean，会被AbstractApplicationContext容器上下文使用，即可以通过容器就可以访问资源文件信息 -->
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basenames">

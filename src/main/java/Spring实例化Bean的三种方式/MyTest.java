@@ -30,6 +30,9 @@ public class MyTest {
         // 默认构造器
         System.out.println("默认构造器");
         Dog dog1 = xmlBeanFactory.getBean("dog1", Dog.class);
+        Dog dog11 = xmlBeanFactory.getBean("dog11", Dog.class);
+        Dog dog111 = xmlBeanFactory.getBean("dog111", Dog.class);
+        System.out.println((dog1 == dog11) && (dog1 ==dog111));
         dog1.sayHello();
     }
 

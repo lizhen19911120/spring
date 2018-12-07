@@ -1,5 +1,5 @@
 # Spring实例化Bean的三种方式
-Spring实例化Bean的方式大致上可以分为三种，构造函数实例化，工厂方法实例化，静态工厂方法实例化。
+Spring实例化Bean的方式大致上可以分为三种，构造函数实例化，工厂方法实例化，静态工厂方法实例化、实例提供者。
 
 # Spring内部Bean和父子Bean
 测试结果：
@@ -8,9 +8,10 @@ Spring实例化Bean的方式大致上可以分为三种，构造函数实例化�
 
 # Spring注入集合属性
 Spring的依赖注入方式大体上可以分为三种：
-1、构造函数注入
-2、Setter方法注入
-3、方法注入（lookup-method注入和replace-method注入）——
+1、构造函数注入（实例化bean时，默认行为）
+2、Setter方法注入（初始化bean时，默认行为）
+3、自动装配依赖bean（初始化bean时，默认关闭）
+~~4、方法注入（lookup-method注入和replace-method注入）~~
 Spring的方法注入可分为两种
 查找方法注入：用于注入方法返回结果，也就是说能通过配置方式替换方法返回结果。即我们通常所说的lookup-method注入。
 替换方法注入：可以实现方法主体或返回结果的替换，即我们通常所说的replaced-method注入。
@@ -25,6 +26,7 @@ FactoryBean接口：可以返回bean的实例的工厂bean，通过实现该接�
 当我们去获取FactoryBean类型的bean时，如果beanName不加&则获取到对应bean的实例；如果beanName加上&，
 则获取到BeanFactory本身的实例；FactoryBean接口对应Spring框架来说占有重要的地位，Spring本身就提供了70多个FactoryBean的实现。
 他们隐藏了实例化一些复杂的细节，给上层应用带来了便利。从Spring3.0开始，FactoryBean开始支持泛型。
+<br>ObjectFactory/ObjectProvider提供类似于FactoryBean的功能。但是目的上有一定的差别。
 
 # Bean的作用域和生命周期
 ##1.Bean的作用域
@@ -50,7 +52,7 @@ globalSession：类似于session作用域，只是其用于portlet环境的web�
 12、如果用户配置了定destroy-method，则调用自定义方法销毁bean
 
 # BeanPostProcessor和BeanFactoryPostProcessor的区别
-BeanPostProcessor接口：后置bean处理器，BeanFactory容器默认功能，允许自定义修改新的bean实例，
+BeanPostProcessor接口：后置bean处理器，ApplicationContext容器额外功能，允许自定义修改新的bean实例，
 应用程序上下文可以在其bean定义中自动检测BeanPostProcessor类型的bean，并将它们应用于随后创建的任何bean。
 （例如：配置文件中注册了一个自定义BeanPostProcessor类型的bean，一个User类型的bean，
 应用程序上下文会在创建User实例之后对User应用BeanPostProcessor）。
@@ -74,7 +76,7 @@ ApplicationContext 是 BeanFactory 的子接口。它能更容易集成Spring的
 
 <br>下表列了BeanFactory 和 ApplicationContext接口和实现的一些特性：
 ![Image text](https://raw.githubusercontent.com/lizhen19911120/img-storage/master/BeanFactory%E5%92%8CApplicationContext%E5%8C%BA%E5%88%AB.png)
-<br>ApplicationContext的各种实现都优于BeanFactory实现的原因之一，特别是当使用BeanFactoryPostProcessors和BeanPostProcessors的时候。这些机制
+<br>ApplicationContext的各种实现都优于BeanFactory实现的原因之一，特别是当使用BeanFactoryPostProcessors和BeanPostProcessors的时候(参考PostProcessorRegistrationDelegate.registerBeanPostProcessors())。这些机制
     实现了一些很重要的功能，例如：**属性的占位替换和AOP**。
     
 # IoC容器启动过程简析（以XmlBeanFactory为例）
@@ -119,7 +121,7 @@ ApplicationContext 是 BeanFactory 的子接口。它能更容易集成Spring的
 <br> 5.3.1 在设置属性之前,给InstantiationAwareBeanPostProcessor一个修改bean状态的机会，InstantiationAwareBeanPostProcessor继承BeanPostProcessor
 <br> 5.3.2 InstantiationAwareBeanPostProcessor可以控制是否继续对bean属性的填充,如果需要停止则直接返回，即不进行后续的默认的spring装配工作
 <br> 5.3.3 获取beanDefinition的bean的属性值
-<br> 5.3.4 默认spring不会自动装配依赖bean，如果开启autowire，spring根据设置选择合适的装配类型（按名字/按类型），将其他依赖的bean放进待装配的属性池(PropertyValues pvs)
+<br> 5.3.4 默认spring不会自动装配依赖bean（参看AbstractBeanDefinition的autowireMode = AUTOWIRE_NO），如果开启autowire（xml配置文件<bean>的autowire属性设置为非NO，@Autowired或者@Resource注解配合AutowiredAnnotationBeanPostProcessor，本质上是通过BeanPostProcessor实现），spring根据设置选择合适的装配类型（按名字/按类型），将其他依赖的bean放进待装配的属性池(PropertyValues pvs)
 <br> 5.3.5 调用applyPropertyValues()，将属性池中的属性装配给bean
 
 <br> 针对5.3.5步，

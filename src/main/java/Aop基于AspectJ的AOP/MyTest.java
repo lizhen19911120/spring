@@ -27,6 +27,7 @@ public class MyTest {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("Aop基于AspectJ的AOP/aspect.xml");
         Animal dog = ctx.getBean("dog", Animal.class);
         dog.sayHello();
+        dog.run();
         System.out.println("---------------------------------------------");
         IIntroduce introduce = ctx.getBean("dog", IIntroduce.class);
         introduce.sayIntroduce();
