@@ -186,7 +186,7 @@ xml中的<aop:aspectj-autoproxy>元素即开启了AOP对spring中的bean的动�
 实现方式大体是顺着以上对于spring创建bean的过程再加上额外的工作完成的。由于源码较为繁琐且
 大致实现差不多，所以这里简要说明步骤：
 <br> 1、<aop:aspectj-autoproxy/>不是spring默认的xml命名空间，所以会通过xml中的namespaceUri获取对应的NamespaceHandler解析器，完成对标签的解析工作之外，并注册了AnnotationAwareAspectJAutoProxyCreator到spring容器中
-<br> 2、AnnotationAwareAspectJAutoProxyCreator实现了BeanPostProcessor接口，读过之前的章节或者对bean的生命周期有所了解的同学一定知道，在bean实例化完成之前和完成之后分别会自动BeanPostProcessor接口的postProcessBeforeInitialization和postProcessAfterInitialization方法
+<br> 2、AnnotationAwareAspectJAutoProxyCreator实现了BeanPostProcessor接口，读过之前的章节或者对bean的生命周期有所了解的同学一定知道，在bean实例化完成之前和完成之后分别会自动调用BeanPostProcessor接口的postProcessBeforeInitialization和postProcessAfterInitialization方法
 <br> postProcessBeforeInstantiation()主要做了以下工作：1、判断beanClass是否为AOP基础类例如Advice，Pointcut或者是一个Advisor或者beanClass是否需要被自动代理，不需要的话则直接缓存；2、判断有无自定义TargetSource（bean的target source），如果是的话，则在此方法里创建代理，而不是在postProcessAfterInitialization()中创建        
 <br> postProcessAfterInitialization()主要做了以下工作：如果bean被子类标识为要代理的bean，则使用配置的拦截器创建代理（如果是提前缓存以解决循环依赖的bean则先跳过）。                           
 

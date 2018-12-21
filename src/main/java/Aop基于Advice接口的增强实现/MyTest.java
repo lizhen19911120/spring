@@ -48,7 +48,7 @@ public class MyTest {
     public void test21() {
         // 后置增强
         // 1、实例化bean和增强
-        Animal dog = new Dog();
+        Dog dog = new Dog();
         MyAfterReturningAdvice advice = new MyAfterReturningAdvice();
 
         // 2、创建ProxyFactory并设置代理目标和增强
@@ -57,7 +57,7 @@ public class MyTest {
         proxyFactory.addAdvice(advice);
 
         // 3、生成代理实例
-        Animal proxyDog = (Animal) proxyFactory.getProxy();
+        Dog proxyDog = (Dog) proxyFactory.getProxy();
         proxyDog.sayHello("二哈", 3);
     }
 
