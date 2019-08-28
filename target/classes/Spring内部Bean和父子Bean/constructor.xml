@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd" profile="dev">
+
+    <!-- ====================Spring内部Bean和父子BeanBegin==================== -->
+    <!--InnerBean-->
+    <bean id="outer" class="Spring内部Bean和父子Bean.Outer">
+        <property name="name" value="我是一个外部bean"></property>
+        <property name="age" value="20"></property>
+        <!--注意这里是property属性，不是beanName-->
+        <property name="inner">
+            <bean class="Spring内部Bean和父子Bean.Inner">
+                <property name="name" value="我是一个内部bean"></property>
+                <property name="age" value="10"></property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <!-- ====================父子bean==================== -->
+    <!-- 子bean必须与父bean保持兼容，也就是说子bean中必须有父bean定义的所有属性 -->
+    <!-- 父bean必须是抽象bean或者定义lazy-init=true也就是不让bean工厂实例化该bean abstract="true" Spring不会实例化该bean-->
+    <bean id="father" class="Spring内部Bean和父子Bean.Father" abstract="true">
+        <property name="name" value="father name（我是从parent Bean继承过来的）"/>
+    </bean>
+    <bean id="son" class="Spring内部Bean和父子Bean.Son" parent="father">
+        <!--<property name="name" value="son name"></property>-->
+        <property name="age" value="18"/>
+    </bean>
+    <!-- ====================Spring内部Bean和父子BeanEnd==================== -->
+
+</beans>
