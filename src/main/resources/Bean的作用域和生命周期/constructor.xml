@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd" profile="dev">
+
+    <!-- ====================生命周期==================== -->
+    <!--注意：这里配置的name是张三，age是25,我们会通过beanPostProcessor来修改nage和age -->
+    <!--<bean id="myLifeCycleBean" class="Bean的作用域和生命周期.LifeCycleBean"-->
+          <!--destroy-method="myDestroy"-->
+          <!--init-method="myInit">-->
+        <!--<property name="name" value="张三"/>-->
+        <!--<property name="age" value="25"/>-->
+    <!--</bean>-->
+
+    <bean id="myLifeCycleBean" class="Bean的作用域和生命周期.LifeCycleBean" destroy-method="myDestroy" init-method="myInit" autowire="no">
+        <property name="name" value="张三"/>
+        <property name="age" value="25"/>
+        <!--注意这里是property属性，不是beanName-->
+        <property name="inner">
+            <bean class="Bean的作用域和生命周期.Inner">
+                <property name="name" value="我是一个内部bean"></property>
+                <property name="age" value="10"></property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <bean id="myBeanPostProcessor" class="Bean的作用域和生命周期.LifeCycleBeanPostProcessor"/>
+
+</beans>
